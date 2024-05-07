@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "itemIndex";
+}
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Content/Pages/ItemMaster.js"></script>
+<script src="~/Content/Pages/Transactions.js"></script>
+
+<h2>Index</h2>
+<form class="form-control">
+    <input type="hidden" id="hdnid" />
+    <br />
+    <label>Item Name</label>
+    <br />
+    <input type="text" id="txtname" />
+    <br />
+    <label>Category</label>
+
+    @*<input type="text" id="txtcat" />*@
+
+    <select id="ddlCategory" class="form-control">
+        <option value="Select">Select</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Consumable">Consumable</option>
+        <option value="Furniture">Furniture</option>
+        <option value="Stationary">Stationary</option>
+    </select>
+    <label>Rate</label>
+    <br />
+    <input type="text" id="txtrate" />
+    <br />
+    <label>Balance Qty</label>
+    <br />
+    <input type="text" id="txtbalqty" />
+    <br />
+
+    <input type="submit" value="Submit" onclick="SaveItem()" class="form-control" />
+</form>
+
+@*<td><button class="btn btn-info" (click)="deleteDept(items.id)"><i class="bi bi-trash-fill"></i></button></td>
+    <td><button class="btn btn-info" (click)="getDept(items.id)"><i class="bi bi-pencil-square"></i></button></td>*@
+
+
+@*.............List............*@
+
+<table id="tblItem" class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Rate</th>
+            <th>Balance Qty</th>
+            <th>Delete</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
