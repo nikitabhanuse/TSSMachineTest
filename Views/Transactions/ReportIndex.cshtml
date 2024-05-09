@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewBag.Title = "ReportIndex";
+}
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+
+<h2>ReportIndex</h2>
+
+<lable>Transaction type</lable>
+<select id="ddltype" class="form-control">
+    <option value="0">Select</option>
+    <option value="I">Issued</option>
+    <option value="P">Purchase</option>
+</select>
+<lable>From Date</lable>
+<input type="date" id="txtfdate" class="form-control" />
+<lable>To Date</lable>
+<input type="date" id="txttodate" class="form-control" />
+
+<table class="flex-column table table-striped-columns" id="tbltransationrport" style="display:none" >
+    <thead class="text-white bg-dark">
+        <tr>
+            <th>Department Name</th>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Rate</th>
+            <th>Transaction Type</th>
+            <th>Vendor Name</th>
+            <th>Quantity</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<div class="col-sm-4 col-sm-4 col-sm-4">
+    <br />
+</div>
+<div class="col-sm-4 col-sm-4 col-sm-4">
+    <button value="Submit" class="form-control text-center" id="btnShow">Show</button>
+</div>
+<div class="col-sm-4 col-sm-4 col-sm-4">
+</div>
+<script>
+    $("#btnShow").click(function () {
+       
+        $.ajax({
+            url: "/Transactions/GetTransactionReport",
+            method: "post",
+            //contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            data: {
+                Transaction_type: $("#ddltype").val(),
+                FromDate: $("#txtfdate").val(),
+                ToDate: $("#txttodate").val()
+            },
+            async: false,
+            success: function (response) {
+                $("#tbltransationrport").css("display","block")
+                var html = "";
+                $("#tbltransationrport tbody").empty();
+                $.each(response.model, function (Index, elementvalue) {
+                    html += "<tr><td>" + elementvalue.Department_name +
+                        "</td><td>" + elementvalue.Item_name +
+                        "</td><td>" + elementvalue.Category +
+                        "</td><td>" + elementvalue.Rate +
+                        "</td><td>" + elementvalue.Transaction_date +
+                        "</td><td>" + elementvalue.Vendor_name +
+                        "</td><td>" + elementvalue.Quantity +
+                        "</td><td>" + elementvalue.Price + "</td></tr>";
+                });
+
+                $("#tbltransationrport tbody").append(html);
+            }
+
+        });
+    });
+</script>
