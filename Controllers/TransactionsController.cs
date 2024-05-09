@@ -14,7 +14,17 @@ namespace TSSMachineTest.Controllers
         {
             return View();
         }
-        public ActionResult SaveTransaction(TransactionModel model)
+        public ActionResult IndexDetails(int Transaction_id)  
+        {
+            ViewBag.Transaction_id = Transaction_id;
+            return View();
+        }
+
+        public ActionResult ReportIndex()
+        {
+            return View();
+        }
+        public ActionResult SaveTransaction(VMSaveTransation model)
         {
             try
             {
@@ -27,11 +37,22 @@ namespace TSSMachineTest.Controllers
 
         }
 
-        public ActionResult GetTransactionList()
+        public ActionResult GetAllDropDowns()
         {
             try
             {
-                return Json(new { model = new TransactionModel().GetTransactionList() }, JsonRequestBehavior.AllowGet);
+                return Json(new { model = new TransactionModel().GetAllDropDowns() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public ActionResult GetTransactionLst()
+        {
+            try
+            {
+                return Json(new { model = new TransactionModel().GetTransactionLst() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -63,5 +84,17 @@ namespace TSSMachineTest.Controllers
                 return Json(new { ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+        public ActionResult GetTransactionReport(string Transaction_type, string ToDate, string FromDate)
+        {
+            try
+            {
+                return Json(new { model = (new TransactionModel().GetTransactionReport(Transaction_type, ToDate, FromDate)) }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

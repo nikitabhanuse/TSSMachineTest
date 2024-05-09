@@ -127,14 +127,20 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemMasterController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
+    <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DepartmentModel.cs" />
     <Compile Include="Models\ItemMasterModel.cs" />
+    <Compile Include="Models\ReportModel.cs" />
     <Compile Include="Models\TransactionModel.cs" />
+    <Compile Include="Models\VendorModel.cs" />
+    <Compile Include="Models\VMtransaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -154,8 +160,11 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Pages\Department.js" />
+    <Content Include="Content\Pages\Details.js" />
     <Content Include="Content\Pages\ItemMaster.js" />
     <Content Include="Content\Pages\Transactions.js" />
+    <Content Include="Content\Pages\Vendor.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -192,6 +201,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\ItemMaster\itemIndex.cshtml" />
     <Content Include="Views\Transactions\TransactionIndex.cshtml" />
+    <Content Include="Views\Transactions\IndexDetails.cshtml" />
+    <Content Include="Views\Department\DeptIndex.cshtml" />
+    <Content Include="Views\Vendor\VendorIndex.cshtml" />
+    <Content Include="Views\Transactions\ReportIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
