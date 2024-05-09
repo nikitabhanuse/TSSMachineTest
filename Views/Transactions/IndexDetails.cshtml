@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "IndexDetails";
+}
+
+<h2>TrensactionDetails</h2>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Content/Pages/ViewAll2.js"></script>
+<script src="~/Content/Pages/Details.js"></script>
+<script src="~/Content/Pages/Transactions.js"></script>
+<input type="hidden" value="@ViewBag.Transaction_id" id="hdndetId" />
+<div>
+    <table id="tblRegg" border="1" class="table table-striped">
+        <thead>
+            <tr>
+                <th>EmpId</th>
+                <th>Name</th>
+                <th>ContactNO</th>
+                <th>Address</th>
+                <th>EmailId</th>
+                <th>City</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>

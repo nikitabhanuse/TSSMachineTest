@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Common;
 using TSSMachineTest.Data;
+using System.Web.Services.Description;
 
 namespace TSSMachineTest.Models
 {
@@ -85,11 +86,11 @@ namespace TSSMachineTest.Models
         public string DeleteItem(int Item_id)
         {
             TSSMachineTestEntities db = new TSSMachineTestEntities();
-            string msg = "Delete successfully";
+            string Message = "Delete successfully";
             var del = db.Item_master.Where(p => p.Item_id == Item_id).FirstOrDefault();
             db.Item_master.Remove(del);
             db.SaveChanges();
-            return msg;
+            return Message;
 
         }
 

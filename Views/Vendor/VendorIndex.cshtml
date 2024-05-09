@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "VendorIndex";
+}
+
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Content/Pages/Vendor.js"></script>
+<h2>VendorIndex</h2>
+
+
+<input type="hidden" id="hdnid" />
+<br />
+<label>Vendor Name</label>
+<input type="text" id="txtvendorname" class="form-control" placeholder="Enter a vendor Name" />
+<br />
+
+<input type="button" class="btn btn-primary" value="submit" onclick="SaveVendor()" />
+<br>
+
+
+<table id="tblVendor" class="flex-column table table-striped-columns">
+    <thead class="text-white bg-dark">
+        <tr>
+            <th>Department Id</th>
+            <th>Department Name</th>
+            <th>Delete</th>
+            <th>Edit</th>
+            @*<th>Details</th>*@
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+

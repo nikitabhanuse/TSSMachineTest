@@ -1,30 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data;
+using System.EnterpriseServices.CompensatingResourceManager;
 using System.Linq;
 using System.Web;
 using TSSMachineTest.Data;
+using TSSMachineTest.Models;
 
 namespace TSSMachineTest.Models
 {
 
     public class TransactionModel
     {
-        public int Transaction_id { get; set; }
-        public int Item_id { get; set; }
-        public string Item_name { get; private set; }
-        public System.DateTime Transaction_date { get; set; }
-        public Nullable<int> Department_id { get; set; }
-        public Nullable<int> Vendor_id { get; set; }
-        public int Quantity { get; set; }
-        public string TransactionType { get; set; }
+        //public int Transaction_id { get; set; }
+        //public int Item_id { get; set; }
+        //public string Item_name { get; private set; }
+        //public string Transaction_date { get; set; }
+        //public Nullable<int> Department_id { get; set; }
+        //public Nullable<int> Vendor_id { get; set; }
+        //public int Quantity { get; set; }
+        //public string TransactionType { get; set; }
+        //public string Vendor_name { get; private set; }
+        //public string Department_name { get; private set; }
 
-        public virtual Department_mast Department_mast { get; set; }
-        public virtual Item_master Item_master { get; set; }
-        public virtual Vendor_mast Vendor_mast { get; set; }
-        public string Vendor_name { get; private set; }
-        public string Department_name { get; private set; }
 
-        public string SaveTransaction(TransactionModel model)
+        public string SaveTransaction(VMSaveTransation model)
         {
             string Message = "Data Save Successfully.";
             TSSMachineTestEntities db = new TSSMachineTestEntities();
@@ -32,11 +33,16 @@ namespace TSSMachineTest.Models
             if (model.Transaction_id == 0)
             {
                 var editData = db.Item_master.Where(p => p.Item_id == model.Item_id).FirstOrDefault();
+                if (model.Quantity > editData.Balance_quantity)
+                {
+                    Message = "Quantity is greater Balance Quantity";
+                    return Message;
+                }
                 if (editData != null && model.TransactionType != null)
                 {
-                    TransactionType = model.TransactionType;
+
                     editData.Balance_quantity = editData.Balance_quantity;
-                    if (TransactionType == "I")
+                    if (model.TransactionType == "I")
                     {
                         editData.Balance_quantity = editData.Balance_quantity - model.Quantity;
                     }
@@ -53,6 +59,9 @@ namespace TSSMachineTest.Models
                     TransactionType = model.TransactionType,
                     Quantity = model.Quantity,
                     Transaction_date = Convert.ToDateTime(model.Transaction_date),
+                    Transaction_id = model.Transaction_id,
+                    Vendor_id = model.Vendor_id,
+                    Department_id = model.Department_id
                 };
                 db.tblTransactions.Add(save);
                 db.SaveChanges();
@@ -63,17 +72,16 @@ namespace TSSMachineTest.Models
                 var editTran = db.tblTransactions.Where(p => p.Item_id == model.Item_id).FirstOrDefault();
                 if (editTran.Quantity != model.Quantity)
                 {
-                    Quantity = Convert.ToInt32(editTran.Quantity);
-                    TransactionType = model.TransactionType;
+                    editTran.TransactionType = model.TransactionType;
                     editData.Balance_quantity = editData.Balance_quantity;
                     editData.Balance_quantity = editData.Balance_quantity - editTran.Quantity;
                 }
                 if (editData != null && model.TransactionType != null)
                 {
                     {
-                        TransactionType = model.TransactionType;
+
                         editData.Balance_quantity = editData.Balance_quantity;
-                        if (TransactionType == "I")
+                        if (model.TransactionType == "I")
                         {
                             editData.Balance_quantity = editData.Balance_quantity - model.Quantity;
                         }
@@ -92,7 +100,10 @@ namespace TSSMachineTest.Models
                     update.Item_id = model.Item_id;
                     update.TransactionType = model.TransactionType;
                     update.Quantity = model.Quantity;
-                    update.Transaction_date = model.Transaction_date;
+                    update.Transaction_date = Convert.ToDateTime(model.Transaction_date);
+                    update.Transaction_id = model.Transaction_id;
+                    update.Vendor_id = model.Vendor_id;
+                    update.Department_id = model.Department_id;
                 }
                 db.SaveChanges();
                 Message = "Update  Data Successfully.";
@@ -100,41 +111,66 @@ namespace TSSMachineTest.Models
             }
             return Message;
         }
-        public List<TransactionModel> GetTransactionList()
+        public VMtransactions GetAllDropDowns()
         {
-            TSSMachineTestEntities db = new TSSMachineTestEntities();
-            List<TransactionModel> lstTransaction = new List<TransactionModel>();
 
-            var TransactionList = (from m in db.Item_master
-                                   join t in db.tblTransactions on m.Item_id equals t.Item_id
-                                   select new
-                                   {
-                                       m.Item_id,
-                                       m.Item_name,
-                                       t.Transaction_date,
-                                       t.Transaction_id,
-                                       t.Quantity,
-                                       t.TransactionType
-                                   }).ToList();
-            if (TransactionList != null)
-            {
-                foreach (var obj in TransactionList)
-                {
-                    lstTransaction.Add(new TransactionModel()
-                    {
-                        Transaction_id = obj.Transaction_id,
-                        Item_id = obj.Item_id,
-                        Item_name = obj.Item_name,
-                        TransactionType = obj.TransactionType,
-                        Quantity = Convert.ToInt32(obj.Quantity),
-                        Transaction_date = obj.Transaction_date,
-                    });
-                }
-            }
-            return lstTransaction;
+            TSSMachineTestEntities db = new TSSMachineTestEntities();
+            List<ItemMaster> lsitem = new List<ItemMaster>();
+            List<department> lstdept = new List<department>();
+            List<Vendor> lstvendor = new List<Vendor>();
+            VMtransactions vMtransaction = new VMtransactions();
+            lsitem = (from m in db.Item_master
+                      select new ItemMaster
+                      {
+                          ItemID = m.Item_id,
+                          ItemName = m.Item_name,
+                          Balance_qty = m.Balance_quantity
+
+                      }).ToList();
+
+            lstdept = (from d in db.Department_mast
+                       select new department
+                       {
+                           DepartmentID = d.Department_id,
+                           DepartmentName = d.Department_name,
+                       }).ToList();
+            lstvendor = (from v in db.Vendor_mast
+                         select new Vendor
+                         {
+                             VendorID = v.Vendor_id,
+                             VendorName = v.Vendor_name,
+                         }).ToList();
+
+            vMtransaction.dept = lstdept;
+            vMtransaction.vendors = lstvendor;
+            vMtransaction.items = lsitem;
+
+            return vMtransaction;
         }
 
+        public List<VMTransactionDetails> GetTransactionLst()
+        {
 
+            TSSMachineTestEntities db = new TSSMachineTestEntities();
+            List<VMTransactionDetails> lsttransation = new List<VMTransactionDetails>();
+            lsttransation = (from T in db.tblTransactions
+                             join I in db.Item_master on T.Item_id equals I.Item_id
+                             join D in db.Department_mast on T.Department_id equals D.Department_id
+                             join V in db.Vendor_mast on T.Vendor_id equals V.Vendor_id
+                             select new VMTransactionDetails
+                             {
+                                 Transaction_id=T.Transaction_id,
+                                 Vendor_id=V.Vendor_id,
+                                 Department_id=D.Department_id,
+                                 Item_name = I.Item_name,
+                                 Department_name = D.Department_name,
+                                 Quantity = T.Quantity,
+                                 TransactionType= T.TransactionType,
+                                 Transaction_date = T.Transaction_date.ToString(),
+                                 Vendor_name = V.Vendor_name,
+                             }).ToList();
+            return lsttransation;
+        }
 
         public string DeleteTransaction(int Transaction_id)
         {
@@ -148,9 +184,9 @@ namespace TSSMachineTest.Models
             }
             return Message;
         }
-        public TransactionModel EditTransaction(int Transaction_id)
+        public VMSaveTransation EditTransaction(int Transaction_id)
         {
-            TransactionModel model = new TransactionModel();
+            VMSaveTransation model = new VMSaveTransation();
             TSSMachineTestEntities db = new TSSMachineTestEntities();
 
             var editData = (from m in db.Item_master
@@ -164,6 +200,8 @@ namespace TSSMachineTest.Models
                                 m.Item_id,
                                 m.Item_name,
                                 v.Vendor_name,
+                                v.Vendor_id,
+                                d.Department_id,
                                 d.Department_name,
                                 t.Transaction_date,
                                 t.Transaction_id,
@@ -176,14 +214,70 @@ namespace TSSMachineTest.Models
                 model.Transaction_id = editData.Transaction_id;
                 model.Item_id = editData.Item_id;
                 model.Item_name = editData.Item_name;
+                model.Vendor_id = editData.Vendor_id;
                 model.Vendor_name = editData.Vendor_name;
                 model.Department_name = editData.Department_name;
+                model.Department_id = editData.Department_id;
                 model.TransactionType = editData.TransactionType;
                 model.Quantity = Convert.ToInt32(editData.Quantity);
-                model.Transaction_date = editData.Transaction_date;
+                model.Transaction_date = Convert.ToDateTime(editData.Transaction_date).ToString("dd/MM/yyyy");
             }
 
             return model;
         }
+        public List<VMTransactionReport> GetTransactionReport(string Transaction_type, string ToDate, string FromDate)
+        {
+            List<VMTransactionReport> lstReport = new List<VMTransactionReport>();
+            TSSMachineTestEntities db = new TSSMachineTestEntities();
+            DataSet ds = new DataSet();
+            using (var cmd = db.Database.Connection.CreateCommand())
+            {
+                db.Database.Connection.Open();
+                cmd.CommandText = "USPGETTRANCTIONDETAILS";             
+                cmd.CommandType = CommandType.StoredProcedure;
+                var paramTransactionType = cmd.CreateParameter();
+                paramTransactionType.ParameterName = "@TransactionType";
+                paramTransactionType.Value = Transaction_type;
+                cmd.Parameters.Add(paramTransactionType);
+
+                var paramToDate = cmd.CreateParameter();
+                paramToDate.ParameterName = "@ToDate";
+                paramToDate.Value = ToDate;
+                cmd.Parameters.Add(paramToDate);
+
+                var paramFromDate = cmd.CreateParameter();
+                paramFromDate.ParameterName = "@FromDate";
+                paramFromDate.Value = FromDate;
+                cmd.Parameters.Add(paramFromDate);
+                DbDataAdapter da = DbProviderFactories.GetFactory("System.Data.SqlClient").CreateDataAdapter();
+                da.SelectCommand = cmd;
+                da.Fill(ds);
+                db.Database.Connection.Close();
+            };
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                VMTransactionReport vmReport = new VMTransactionReport();
+                vmReport.Department_name = dr["Department_name"].ToString();
+                vmReport.Item_name = dr["Item_name"].ToString();
+                vmReport.Category = dr["Category"].ToString();
+                vmReport.Rate = dr["Rate"].ToString();
+                vmReport.Transaction_date = dr["Transaction_date"].ToString();
+                vmReport.Vendor_name = dr["Vendor_name"].ToString();
+                vmReport.Quantity = dr["Quantity"].ToString();
+                vmReport.Price = dr["Price"].ToString();
+
+                lstReport.Add(vmReport);
+
+
+
+
+            }
+
+            return lstReport;
+
+
+
+        }
+
     }
 }
